@@ -781,6 +781,185 @@ delay(1000); // wait for 1s
 !>>
 <hr />
 
+<h1 id="ASSIGNEMENT">Experiments</h1>
+                    
+<h2 id="Assignment1 -LDR">Exp 2 : Automatic night lamp model using LDR and LED</h2>
+
+<h3 id="hardware-required">Hardware required</h3>
+<ul>
+  <li>Arduino board x1</li>
+  <li>USB cable x1</li>
+  <li> LDR x1</li>
+  <li>Yellow M5 LED x1</li>
+  <li>10KΩ resistor x1</li>
+  <li>1KΩ resistor x1</li>
+  <li>Breadboard x1</li>
+  <li>Breadboard jumper wires X7 </li>
+</ul>
+
+<h3 id="code-1">Code</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const int LED=2;            // LED connect to Digital Pin 
+const int LDRSensor= A0;    //Sensor pin connects to analog pin A0
+
+int state;                  //declaring variable to store the reading 
+int threshold=600;          //threshold voltage declared 
+
+void setup() 
+{
+  pinMode (LED, OUTPUT);   
+  Serial.begin(9600); 
+}
+
+void loop()
+{
+  state= analogRead(LDRSensor); //sensor reading value stored in state variable
+  if (state < threshold)
+    {
+      digitalWrite(LED, HIGH); //if the light is below the threshold value, the LED will turns on
+      Serial.println(state);
+      delay(2000);
+    }
+  else
+    {
+      digitalWrite(LED, LOW); //otherwise, the LED is off
+      Serial.println(state);
+      delay(1000);
+    }
+}
+</code></pre></div></div>
+
+<h3 id="video-1">Video</h3>
+<a href="https://youtu.be/q4aMIjaCOq0">Visit For Vedio </a>
+<iframe width="560" height="315" src="https://youtu.be/q4aMIjaCOq0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<hr />
+<h2 id="Assignment2 -DICE">Exp 2 :  Digital Dice using 6 LEDs and 1 Push Button </h2>
+
+<h3 id="hardware-required">Hardware required</h3>
+<ul>
+  <li>Arduino board x1</li>
+  <li>USB cable x1</li>
+  <li> Push Button x1</li>
+  <li>Yellow M5 LED x6</li>
+  <li>220Ω resistor x6</li>
+  <li>1KΩ resistor x1</li>
+  <li>Breadboard x1</li>
+  <li>Breadboard jumper wires X12 </li>
+</ul>
+
+<h3 id="code-1">Code</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#define DEBUG 0
+
+// 6 consecutive digital pins for the LEDs
+int first = 2;
+int second = 3;
+int third = 4;
+int fourth = 5;
+int fifth = 6;
+int sixth = 7;
+
+// pin for the button switch
+int button = 12;
+// value to check state of button switch
+int pressed = 0;
+
+void setup() {
+  // set all LED pins to OUTPUT
+  for (int i=first; i<=sixth; i++) {
+    pinMode(i, OUTPUT);
+  }
+  // set buttin pin to INPUT
+  pinMode(button, INPUT);
+  
+  // initialize random seed by noise from analog pin 0 (should be unconnected)
+  randomSeed(analogRead(0));
+
+  // if we're debugging, connect to serial 
+  #ifdef DEBUG
+    Serial.begin(9600);
+  #endif
+
+}
+
+void buildUpTension() {
+  // light LEDs from left to right and back to build up tension
+  // while waiting for the dice to be thrown
+  // left to right
+  for (int i=first; i<=sixth; i++) {
+    if (i!=first) {
+      digitalWrite(i-1, LOW);
+    }
+    digitalWrite(i, HIGH);
+    delay(100);
+  }
+  // right to left
+  for (int i=sixth; i>=first; i--) {
+    if (i!=sixth) {
+      digitalWrite(i+1, LOW);
+    }
+    digitalWrite(i, HIGH);
+    delay(100);
+  }
+}
+
+void showNumber(int number) {
+  digitalWrite(first, HIGH);
+  if (number >= 2) {
+    digitalWrite(second, HIGH);
+  }
+  if (number >= 3) {
+    digitalWrite(third, HIGH);    
+  }
+  if (number >= 4) {
+    digitalWrite(fourth, HIGH);    
+  }
+  if (number >= 5) {
+    digitalWrite(fifth, HIGH);    
+  }
+  if (number == 6) {
+    digitalWrite(sixth, HIGH);    
+  }
+}
+
+int throwDice() {
+  // get a random number in the range [1,6]
+  int randNumber = random(1,7);
+  
+  #ifdef DEBUG
+    Serial.println(randNumber);
+  #endif
+  
+  return randNumber;
+}
+
+void setAllLEDs(int value) {
+  for (int i=first; i<=sixth; i++) {
+    digitalWrite(i, value);
+  }
+}
+
+void loop() {
+  // if button is pressed - throw the dice
+  pressed = digitalRead(button);
+
+  if (pressed == HIGH) {
+    // remove previous number
+    setAllLEDs(LOW);
+    
+    buildUpTension();
+    int thrownNumber = throwDice();
+    showNumber(thrownNumber);
+  } 
+
+}
+</code></pre></div></div>
+
+<h3 id="video-1">Video</h3>
+<a href="https://youtu.be/q4aMIjaCOq0">Visit For Vedio </a>
+<iframe width="560" height="315" src="https://youtu.be/q4aMIjaCOq0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<hr /
+
 
 <footer align="center">© 2021 Suresh P </footer>
 
